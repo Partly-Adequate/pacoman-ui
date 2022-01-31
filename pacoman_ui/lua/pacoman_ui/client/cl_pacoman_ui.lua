@@ -330,6 +330,7 @@ local function AddSettingPanel(parent_panel, setting, namespace_type)
 	local setting_panel = vgui.Create("pacoman_tree_node", parent_panel)
 	setting_panel.setting = setting
 	setting_panel.namespace_type = namespace_type
+	setting_panel.header:SetTooltip(setting.description)
 	setting_panel.header.lbl_text:SetText(setting.id)
 	setting_panel.header.img_icon:SetMaterial(ic_setting)
 	setting_panel.header.DoClick = function(self)
