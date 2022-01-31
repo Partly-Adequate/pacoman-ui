@@ -821,7 +821,7 @@ local DEFAULT_CONFIGURATION_SCREEN = {}
 
 function DEFAULT_CONFIGURATION_SCREEN:Init()
 	-- size
-	local width = ScrW() * 0.5
+	local width = ScrW() * 0.75
 	local height = ScrH() * 0.75
 
 	-- position and size of the setting panel
