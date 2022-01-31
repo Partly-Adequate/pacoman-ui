@@ -598,15 +598,34 @@ function DEFAULT_SETTING_PANEL:SetSetting(setting, namespace_type)
 
 			local original_setting = pacoman.GetOriginalOf(self.setting)
 
-			local btn_view_original = vgui.Create("DButton", self)
-			btn_view_original:SetPos(quarter_width, self.num_rows * HEADER_HEIGHT)
-			btn_view_original:SetSize(three_quarter_width, HEADER_HEIGHT)
-			btn_view_original:SetText("  Click here to view")
-			btn_view_original:SetTextColor(col_text)
-			btn_view_original:SetContentAlignment(4)
-			btn_view_original:SetPaintBackground(false)
-			btn_view_original.DoClick = function(s)
-				pacoman_ui:SetSetting(original_setting, CLIENT_SETTING)
+			if original_setting then
+				local btn_view_original = vgui.Create("DButton", self)
+				btn_view_original:SetPos(quarter_width, self.num_rows * HEADER_HEIGHT)
+				btn_view_original:SetSize(three_quarter_width - HEADER_HEIGHT, HEADER_HEIGHT)
+				btn_view_original:SetText("  Click here to view")
+				btn_view_original:SetTextColor(col_text)
+				btn_view_original:SetContentAlignment(4)
+				btn_view_original:SetPaintBackground(false)
+				btn_view_original.DoClick = function(s)
+					pacoman_ui:SetSetting(original_setting, CLIENT_SETTING)
+				end
+			else
+				local lbl_doesnt_exist = vgui.Create("DLabel", self)
+				lbl_doesnt_exist:SetPos(quarter_width, self.num_rows * HEADER_HEIGHT)
+				lbl_doesnt_exist:SetSize(three_quarter_width - HEADER_HEIGHT, HEADER_HEIGHT)
+				lbl_doesnt_exist:SetText("  Original setting doesn't exist")
+				lbl_doesnt_exist:SetTextColor(col_text)
+				lbl_doesnt_exist:SetContentAlignment(4)
+				lbl_doesnt_exist:SetPaintBackground(false)
+			end
+
+			local btn_remove_override = vgui.Create("DImageButton", self)
+			btn_remove_override:SetPos(width - HEADER_HEIGHT, self.num_rows * HEADER_HEIGHT)
+			btn_remove_override:SetSize(HEADER_HEIGHT, HEADER_HEIGHT)
+			btn_remove_override:SetPaintBackground(false)
+			btn_remove_override:SetMaterial(ic_remove)
+			btn_remove_override.DoClick = function(s)
+				pacoman.RequestOverrideRemoval(self.setting)
 			end
 
 			self.num_rows = self.num_rows + 1
@@ -783,9 +802,16 @@ function DEFAULT_SETTING_PANEL:AttemptOverrideAddition()
 end
 
 function DEFAULT_SETTING_PANEL:AttemptOverrideRemoval()
-	if self.namespace_type ~= CLIENT_SETTING then return end
+	if self.namespace_type == SERVER_SETTING then return end
 
-	pacoman.RequestOverrideRemoval(self.setting)
+	if self.namespace_type == CLIENT_OVERRIDE then
+		pacoman.RequestOverrideRemoval(self.setting)
+		return
+	end
+
+	if self.namespace_type == CLIENT_SETTING then
+		pacoman.RequestOverrideRemoval(pacoman.GetOverrideOf(self.setting))
+	end
 end
 
 derma.DefineControl("pacoman_default_setting_panel", "", DEFAULT_SETTING_PANEL, "DPanel")
