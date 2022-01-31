@@ -510,6 +510,24 @@ function DEFAULT_SETTING_PANEL:SetSetting(setting, namespace_type)
 
 	self.num_rows = self.num_rows + 1
 
+	if setting.description then
+		local lbl_setting_desc = vgui.Create("DLabel", self)
+		lbl_setting_desc:SetPos(0, self.num_rows * HEADER_HEIGHT)
+		lbl_setting_desc:SetSize(quarter_width, HEADER_HEIGHT)
+		lbl_setting_desc:SetText(" Description:")
+		lbl_setting_desc:SetTextColor(col_text)
+		lbl_setting_desc:SetPaintBackground(false)
+
+		local lbl_setting_description = vgui.Create("DLabel", self)
+		lbl_setting_description:SetPos(quarter_width, self.num_rows * HEADER_HEIGHT)
+		lbl_setting_description:SetSize(three_quarter_width, HEADER_HEIGHT)
+		lbl_setting_description:SetContentAlignment(4)
+		lbl_setting_description:SetText("  " .. (setting.description and setting.description or ""))
+		lbl_setting_description:SetTextColor(col_text)
+
+		self.num_rows = self.num_rows + 1
+	end
+
 	if parent_setting ~= nil then
 		local lbl_parent = vgui.Create("DLabel", self)
 		lbl_parent:SetPos(0, self.num_rows * HEADER_HEIGHT)
