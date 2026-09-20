@@ -8,5 +8,7 @@ if SERVER then
 	resource.AddFile("materials/vgui/pacoman_ui/ic_add.vmt")
 	resource.AddFile("materials/vgui/pacoman_ui/ic_remove.vmt")
 else
-	include("pacoman_ui/client/cl_pacoman_ui.lua")
+	hook.Add("InitPostEntity", "PACOMAN_UI_InitPostEntity", function()
+		include("pacoman_ui/client/cl_pacoman_ui.lua")
+	end)
 end
