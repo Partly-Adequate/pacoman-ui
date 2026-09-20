@@ -93,6 +93,56 @@ end
 
 derma.DefineControl("pacoman_type_any", "", ANY_TYPE_PANEL, "pacoman_type_base")
 
+-- Panel for changing color values
+local COLOR_TYPE_PANEL = {}
+
+function COLOR_TYPE_PANEL:Init()
+	self:SetPaintBackground(false)
+
+	local _, self_size_y = self:GetSize()
+
+	self.color_rect_container = vgui.Create("DPanel", self)
+	self.color_rect_container:Dock(LEFT)
+	self.color_rect_container:SetSize(self_size_y, self_size_y)
+	self.color_rect_container:DockPadding(2,2,2,2)
+	self.color_rect_container:SetBackgroundColor(Color(255,255,255))
+	self.color_rect_container:SetPaintBackground(true)
+
+	self.color_rect = vgui.Create("DPanel", self.color_rect_container)
+	self.color_rect:Dock(FILL)
+	self.color_rect:SetDrawBackground(true)
+	self.color_rect:SetPaintBorderEnabled(true)
+
+
+	self.txt_setting_value = vgui.Create("DTextEntry", self)
+	self.txt_setting_value:SetText("")
+	self.txt_setting_value:Dock(FILL)
+	self.txt_setting_value:SetTextColor(col_text)
+	self.txt_setting_value:SetCursorColor(col_text)
+	self.txt_setting_value:SetPaintBackground(false)
+	self.txt_setting_value.OnGetFocus = function(s)
+		pacoman_ui:SetKeyboardInputEnabled(true)
+	end
+	self.txt_setting_value.OnLoseFocus = function(s)
+		pacoman_ui:SetKeyboardInputEnabled(false)
+	end
+	self.txt_setting_value.OnEnter = function(s, serialized_value)
+		self:OnValueChanged(self:GetValue())
+	end
+end
+
+function COLOR_TYPE_PANEL:SetValue(value)
+	self.txt_setting_value:SetText(self.type:Serialize(value))
+	self.color_rect:SetBackgroundColor(value)
+end
+
+function COLOR_TYPE_PANEL:GetValue()
+	return self.type:Deserialize(self.txt_setting_value:GetText())
+end
+
+derma.DefineControl("pacoman_type_color", "", COLOR_TYPE_PANEL, "pacoman_type_base")
+RegisterTypePanel(pacoman.TYPE_COLOR.id, "pacoman_type_color")
+
 -- Panel for changing Boolean values
 local BOOLEAN_TYPE_PANEL = {}
 
