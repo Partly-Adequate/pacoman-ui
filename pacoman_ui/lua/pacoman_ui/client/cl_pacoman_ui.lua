@@ -94,6 +94,48 @@ end
 derma.DefineControl("pacoman_type_any", "", ANY_TYPE_PANEL, "pacoman_type_base")
 
 -- Panel for changing color values
+local ENUM_TYPE_PANEL = {}
+
+function ENUM_TYPE_PANEL:Init()
+	self:SetPaintBackground(false)
+
+	local _, self_size_y = self:GetSize()
+
+	self.cb_enum = vgui.Create("DComboBox", self)
+	self.cb_enum:Dock(FILL)
+	self.cb_enum:SetTextColor(col_text)
+	self.cb_enum.Paint = function(s, w, h)
+		surface.SetDrawColor(col_base_darker)
+		surface.DrawRect(0, 0, w, h)
+		surface.SetDrawColor(col_base_darkest)
+		surface.DrawRect(0, 0, w, h)
+	end
+
+	self.cb_enum.OnSelect = function(s, index, value)
+		self:OnValueChanged(value)
+	end
+end
+
+function ENUM_TYPE_PANEL:SetType(type)
+	self.type = type
+	for i = 1, #type.values do
+		local value = type.values[i]
+		self.cb_enum:AddChoice(value, value)
+	end
+end
+
+function ENUM_TYPE_PANEL:SetValue(value)
+	self.cb_enum:ChooseOption(value, self.type.value_indices[value])
+end
+
+function ENUM_TYPE_PANEL:GetValue()
+	local value, data = self.cb_enum:GetSelected()
+	return self.cb_enum:GetText()
+end
+
+derma.DefineControl("pacoman_type_enum", "", ENUM_TYPE_PANEL, "pacoman_type_base")
+
+-- Panel for changing color values
 local COLOR_TYPE_PANEL = {}
 
 function COLOR_TYPE_PANEL:Init()
@@ -540,7 +582,13 @@ function DEFAULT_SETTING_PANEL:SetSetting(setting, namespace_type)
 	local width, height = self:GetSize()
 	local quarter_width = width * 0.25
 	local three_quarter_width = width - quarter_width
-	local value_panel_id = type_panel_ids[setting.type.id] or "pacoman_type_any"
+	local value_panel_id = "pacoman_type_any"
+	if setting.type.is_enum then
+		value_panel_id = "pacoman_type_enum"
+	end
+	if type_panel_ids[setting.type.id] then
+		value_panel_id = type_panel_ids[setting.type.id]
+	end
 	local depends_on = self.setting.depends_on
 	local sources = self.setting.sources
 	local parent_setting = self.setting.parent
